@@ -1,6 +1,6 @@
-# Estación Meteorológica - Sistema de Monitoreo y Control
+# Estación espacial - Sistema de Monitoreo y Control
 
-Este proyecto permite la instalación de una estación meteorológica basada en sensores para monitorear variables climáticas como la temperatura, humedad, presión, velocidad del viento y más. Además, integra un sistema de control para realizar cálculos de Evapotranspiración y control del CubeSat.
+Este proyecto permite orbitar un satélite con sensores para monitorear variables climáticas como la temperatura, humedad, presión, velocidad del viento y más. Además, integra un sistema de control para realizar cálculos de Evapotranspiración y control del CubeSat.
 
 ## Índice
 - [Requisitos previos](#requisitos-previos)
