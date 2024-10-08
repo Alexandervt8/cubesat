@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Control y Monitoreo de CubeSat</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="scripts/control_cubesat.js"></script>
+</head>
+<body>
+    <div id="sidebar"></div> <!-- Menú lateral dinámico -->
+
+    <div id="content">
+        <h1>Monitoreo de Descenso del CubeSat</h1>
+
+        <div class="modo-container">
+            <label>
+                <input type="radio" name="modo" value="automatico" onchange="cambiarModo(this.value)"> Modo Automático
+            </label>
+            <label>
+                <input type="radio" name="modo" value="manual" onchange="cambiarModo(this.value)" checked> Modo Manual
+            </label>
+        </div>
+        
+        <button onclick="iniciarMonitoreo()" class="button modo_b">Iniciar Monitoreo</button>
+        <button onclick="detenerMonitoreo()" class="button modo_b">Detener Monitoreo</button>
+        <button onclick="activarServomotores()" class="button modo_b">Activar Servomotores</button>
+
+        <div class="columna-container">
+            <!-- Lecturas de Sensores en tiempo real -->
+            <div id="sensores" class="columna">
+                <h2>Lecturas de Sensores</h2>
+                <p>Altitud <strong>(m)</strong>: <span id="altitud"></span></p>
+                <p>Velocidad de Descenso <strong>(m/s)</strong>: <span id="velocidad-descenso"></span></p>
+                <p>Presión Atmosférica <strong>(kPa)</strong>: <span id="presion-atmosferica"></span></p>
+                <p>Temperatura Externa <strong>(°C)</strong>: <span id="temperatura"></span></p>
+                <p>Orientación <strong>(°)</strong>: <span id="orientacion"></span></p>
+            </div>
+
+            <!-- Estado de Servomotores -->
+            <div id="servomotores" class="columna">
+                <h2>Control de Servomotores</h2>
+                <p>Motor 1: <span id="estado-motor1">Desactivado</span></p>
+                <p>Motor 2: <span id="estado-motor2">Desactivado</span></p>
+                <p>Motor 3: <span id="estado-motor3">Desactivado</span></p>
+                <p>Motor 4: <span id="estado-motor4">Desactivado</span></p>
+            </div>
+
+            <!-- Gráficos en tiempo real -->
+            <div id="graficos" class="columna">
+                <h2>Gráficos en Tiempo Real</h2>
+                <canvas id="grafico-altitud" width="400" height="200"></canvas>
+                <canvas id="grafico-velocidad" width="400" height="200"></canvas>
+            </div>
+        </div>
+
+        <div class="alertas">
+            <h2>Alertas de Seguridad</h2>
+            <p id="alerta-descenso">Estado del Descenso: <span id="estado-descenso">Estable</span></p>
+            <p id="alerta-aterrizaje">Distancia al suelo: <span id="distancia-suelo"></span> m</p>
+            <p id="alerta-servomotores">Servomotores: <span id="estado-servomotores">Listos</span></p>
+        </div>
+    </div>
+   <script src="menu.js"></script>
+    <script>
+        let intervalId;
+        let altitudActual = 1000; // Valor inicial de ejemplo
+
+        function cambiarModo(modo) {
+            const botones = document.querySelectorAll('.button');
+            if (modo === 'automatico') {
+                botones.forEach(boton => boton.disabled = true);
+                intervalId = setInterval(() => {
+                    actualizarLecturas(); // Función que actualiza las lecturas de sensores
+                }, 2000); // Actualización cada 2 segundos
+            } else {
+                botones.forEach(boton => boton.disabled = false);
+                clearInterval(intervalId);
+            }
+        }
+
+        function iniciarMonitoreo() {
+            console.log("Monitoreo iniciado");
+            actualizarLecturas();
+        }
+
+        function detenerMonitoreo() {
+            console.log("Monitoreo detenido");
+            clearInterval(intervalId);
+        }
+
+        function activarServomotores() {
+            const distanciaSuelo = calcularDistanciaSuelo();
+            if (distanciaSuelo <= 3) {
+                // Activar motores a 3 metros del suelo
+                console.log("Activando servomotores para aterrizaje suave");
+                document.getElementById("estado-motor1").innerText = "Activado";
+                document.getElementById("estado-motor2").innerText = "Activado";
+                document.getElementById("estado-motor3").innerText = "Activado";
+                document.getElementById("estado-motor4").innerText = "Activado";
+                document.getElementById("estado-servomotores").innerText = "Activados";
+            } else {
+                console.log("Distancia al suelo no es suficiente para activar servomotores.");
+            }
+        }
+
+        function actualizarLecturas() {
+            // Aquí simulamos lecturas actualizadas desde sensores
+            altitudActual -= 50; // Simulando descenso
+            document.getElementById("altitud").innerText = altitudActual;
+            document.getElementById("velocidad-descenso").innerText = Math.random().toFixed(2); // Velocidad aleatoria
+            document.getElementById("presion-atmosferica").innerText = (101.325 - (altitudActual * 0.12)).toFixed(2);
+            document.getElementById("temperatura").innerText = (15 - (altitudActual * 0.005)).toFixed(2);
+            document.getElementById("orientacion").innerText = Math.random().toFixed(2);
+
+            // Actualizar distancia al suelo para alerta de aterrizaje
+            document.getElementById("distancia-suelo").innerText = altitudActual;
+
+            // Alerta si la distancia es menor a 3 metros
+            if (altitudActual <= 3) {
+                document.getElementById("estado-descenso").innerText = "Cerca del aterrizaje";
+            } else {
+                document.getElementById("estado-descenso").innerText = "Descenso normal";
+            }
+        }
+
+        function calcularDistanciaSuelo() {
+            return altitudActual; // Supongamos que la altitud es la distancia al suelo
+        }
+
+        // Simulaciones adicionales para los gráficos
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicialización de gráficos
+            const ctxAltitud = document.getElementById('grafico-altitud').getContext('2d');
+            const ctxVelocidad = document.getElementById('grafico-velocidad').getContext('2d');
+
+            const graficoAltitud = new Chart(ctxAltitud, {
+                type: 'line',
+                data: {
+                    labels: [], // Tiempo
+                    datasets: [{
+                        label: 'Altitud (m)',
+                        data: [],
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        fill: false
+                    }]
+                }
+            });
+
+            const graficoVelocidad = new Chart(ctxVelocidad, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Velocidad de Descenso (m/s)',
+                        data: [],
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        fill: false
+                    }]
+                }
+            });
+
+            setInterval(() => {
+                graficoAltitud.data.labels.push(new Date().toLocaleTimeString());
+                graficoAltitud.data.datasets[0].data.push(altitudActual);
+                graficoAltitud.update();
+
+                graficoVelocidad.data.labels.push(new Date().toLocaleTimeString());
+                graficoVelocidad.data.datasets[0].data.push(Math.random());
+                graficoVelocidad.update();
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

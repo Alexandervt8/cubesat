@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Análisis de parámetros</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="scripts/funciones_servidor.js"></script> 
+</head>
+<body>
+    <div id="sidebar"></div> <!-- Aquí se cargará dinámicamente el menú -->
+
+    <div id="content">
+        <h1>Análisis de parámetros</h1>
+         <div class="modo-container">
+            <label>
+                <input type="radio" name="modo" value="automatico" onchange="cambiarModo(this.value)"> Modo Automático
+            </label>
+            <label>
+                <input type="radio" name="modo" value="manual" onchange="cambiarModo(this.value)" checked> Modo Manual
+            </label>
+        </div>
+        
+        <button onclick="fetchPromedios()" class="button modo_b">Obtener Promedios</button>
+        <button onclick="fetchConstantes()" class="button modo_b">Obtener Constantes</button>
+        <button onclick="calcularETo()" class="button modo_b">Calcular ETo</button>
+        
+        <div class="columna-container">
+            <div id="promedios" class="columna">
+                <h2>Promedios de Sensores</h2>
+                <p>Temperatura <strong>(°C)</strong>: <span id="promedio-temperatura"></span></p>
+                <p>Humedad Relativa <strong>(%)</strong>: <span id="promedio-humedad-relativa"></span></p>
+                <p>Radiacion Solar <strong>(MJ/m²/día)</strong>: <span id="promedio-radiacion-solar"></span></p>
+                <p>Velocidad del Viento <strong>(m/s)</strong>: <span id="promedio-velocidad-viento"></span></p>
+                <p>Presion Atmosferica <strong>(KPa)</strong>: <span id="promedio-presion-atmosferica"></span></p>
+            </div>
+
+            <div id="constantes" class="columna">
+                <h2>Valores de Constantes</h2>
+                <p>Lambda <strong>(adimensional)</strong>: <span id="constante-lambda"></span></p>
+                <p>Delta <strong>(kPa/°C)</strong>: <span id="constante-delta"></span></p>
+                <p>Rho <strong>(kg/m³)</strong>: <span id="constante-rho"></span></p>
+                <p>Cp <strong>(J/(kg·K))</strong>: <span id="constante-cp"></span></p>
+                <p>Gamma <strong>(kPa/°C)</strong>: <span id="constante-gamma"></span></p>
+            </div>
+            
+            <div id="calculos" class="columna">
+                <h2>Resultados</h2>
+                <p>ETo calculada <strong>(mm/día)</strong>:  <span id="eto-calculada"></span></p>
+                <p>ETc ingresada <strong>(mm/día)</strong>:  <span id="input-lisimetro"></span></p>
+                <p>kc calculado <strong>(adimensional)</strong>: <span id="kc-calculado"></span></p>
+
+            </div>
+        </div>
+        <h2>Fórmulas</h2>
+        <div class="columna-container">
+            
+            <div class="columna">
+                
+                     \[
+                     Kc = \frac{ETc}{ETo}
+                     \]
+            </div>
+            <p>Evapotranspiración de referencia (ETo) (mm/día)</p>
+            <p>Valor del Lisímetro (ETc) (mm/día)</p>
+            <p>Coeficiente de cultivo (Kc)</p>
+        </div>
+    
+        <div>
+            <div id="lisimetro-input">
+                <h2>Valor del Lisímetro (ETc)</h2>
+                <input type="number" id="valor-lisimetro" placeholder="Ingrese el valor del lisímetro">
+                <button onclick="calcularKC()" class="button">Calcular KC</button>
+                <button onclick="compararKC()" class="button">Comparar KC</button>
+            </div>            
+        </div>
+        <p>kc calculado <strong>(adimensional)</strong>: <span id="kc-calculado-2"></span></p>
+        <div id="cultivos-mismo-kc">
+            <h2>Cultivos con el mismo KC inicial</h2>
+            <table id="tabla-cultivos">
+                <thead>
+                    <tr>
+                        <th>Cultivo</th>
+                        <th>Variedad</th>
+                        <th>Región</th>
+                        <th>KC Incial</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-cuerpo">
+                    <!-- Aquí se agregarán dinámicamente las filas -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script src="menu.js"></script> <!-- Incluir el archivo JavaScript del menú -->
+    <script>
+        let intervalId;
+
+        function cambiarModo(modo) {
+            const botones = document.querySelectorAll('.button');
+            if (modo === 'automatico') {
+                botones.forEach(boton => boton.disabled = true);
+                intervalId = setInterval(() => {
+                    fetchPromedios();
+                    fetchConstantes();     
+                }, 5000);
+                intervalId = setInterval(() => {
+                    calcularETo();  
+                }, 8000);
+
+            } else {
+                botones.forEach(boton => boton.disabled = false);
+                clearInterval(intervalId);
+            }
+        }
+
+        // Cargar las constantes al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            
+        });
+    </script>
+</body>
+</html>
