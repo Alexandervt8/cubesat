@@ -17,6 +17,7 @@
 </head>
 <body>
     <div id="sidebar"></div>
+    <div id="content">
     <div id="graficos">
         <h1>Visualización de Datos Meteorológicos</h1>
 
@@ -76,7 +77,7 @@
         <div id="boxplot" class="chart-container">
             <h2>Diagrama de Caja y Bigotes</h2>
         </div>
-
+    </div>
     </div>
 
     <script>

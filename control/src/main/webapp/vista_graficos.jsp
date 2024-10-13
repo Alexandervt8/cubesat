@@ -95,7 +95,7 @@
         
         function fetchConstantes() {
             const baseURL = getBaseURL();
-            fetch(`${baseURL}/sensores/constants`)
+            fetch(`${baseURL}/control/constants`)
                 .then(response => response.json())
                 .then(data => {
                     lambda = data.lambda || 2.2; // valor estándar para lambda en MJ/kg
@@ -111,7 +111,7 @@
 
         function fetchData() {
             const baseURL = getBaseURL();
-            fetch(`${baseURL}/sensores/etr-data`)
+            fetch(`${baseURL}/control/etr-data`)
                 .then(response => response.json())
                 .then(data => {
                     const timestamp = new Date();
@@ -122,7 +122,7 @@
                     updateChart(chartPresion, timestamp, data.presion_atmosferica / 10);
 
                     // Calcular ETo
-                    fetch(`${baseURL}/sensores/calculateETo`, {
+                    fetch(`${baseURL}/control/calculateETo`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'

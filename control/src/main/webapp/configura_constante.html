@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Modificar Constantes</title>
+    <link rel="stylesheet" href="css/styles.css"> <!-- Enlace al archivo CSS -->
+</head>
+<body>
+    <div id="sidebar"></div> <!-- Aquí se cargará dinámicamente el menú -->
+
+    <div id="content">
+        <h1>Modificar Constantes</h1>
+        <div class="modo-container">
+            <form>
+                <label>Cp: <input type="text" id="cp"></label><br>
+                <label>Lambda: <input type="text" id="lambda"></label><br>
+                <label>Rho: <input type="text" id="rho"></label><br>
+                <label>Gravedad: <input type="text" id="gravedad"></label><br>
+                <label>Área Frontal: <input type="text" id="area_frontral"></label><br>
+                <label>Coeficiente de Arrastre: <input type="text" id="coef_arrastre"></label><br>
+                <label>Masa del Cubesat: <input type="text" id="masa_cubesat"></label><br>
+                <label>Tiempo de Descenso: <input type="text" id="tiempo_descenso"></label><br>
+                <button type="button" onclick="updateConstants()" class="button">Actualizar Constantes</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="menu.js"></script> <!-- Incluir el archivo JavaScript del menú -->
+    <script>
+        function getBaseURL() {
+            const isLocalhost = location.hostname === "localhost" || location.hostname === "127.0.0.1";
+            return isLocalhost ? 'http://localhost:8080' : `http://${location.hostname}:8080`;
+        }
+
+        function loadConstants() {
+            const baseURL = getBaseURL();
+            fetch(`${baseURL}/control/constants`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error en la solicitud.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById('cp').value = data.cp;
+                    document.getElementById('lambda').value = data.lambda;
+                    document.getElementById('rho').value = data.rho;
+                    document.getElementById('gravedad').value = data.gravedad;
+                    document.getElementById('area_frontral').value = data.area_frontral;
+                    document.getElementById('coef_arrastre').value = data.coef_arrastre;
+                    document.getElementById('masa_cubesat').value = data.masa_cubesat;
+                    document.getElementById('tiempo_descenso').value = data.tiempo_descenso;
+                })
+                .catch(error => {
+                    console.error('Error al cargar las constantes:', error);
+                    alert('Error al cargar las constantes. Verifica la consola para más detalles.');
+                });
+        }
+
+        function updateConstants() {
+            const baseURL = getBaseURL();
+            const constants = {
+                cp: parseFloat(document.getElementById('cp').value),
+                lambda: parseFloat(document.getElementById('lambda').value),
+                rho: parseFloat(document.getElementById('rho').value),
+                gravedad: parseFloat(document.getElementById('gravedad').value),
+                area_frontral: parseFloat(document.getElementById('area_frontral').value),
+                coef_arrastre: parseFloat(document.getElementById('coef_arrastre').value),
+                masa_cubesat: parseFloat(document.getElementById('masa_cubesat').value),
+                tiempo_descenso: parseFloat(document.getElementById('tiempo_descenso').value)
+            };
+
+            fetch(`${baseURL}/control/constants`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(constants)
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Constantes actualizadas correctamente.');
+                    loadConstants(); // Volver a cargar las constantes después de actualizar
+                } else {
+                    alert('Error al actualizar las constantes.');
+                }
+            })
+            .catch(error => {
+                console.error('Error al actualizar las constantes:', error);
+                alert('Error al actualizar las constantes. Verifica la consola para más detalles.');
+            });
+        }
+
+        // Cargar las constantes al cargar la página
+        document.addEventListener('DOMContentLoaded', loadConstants);
+    </script>
+</body>
+</html>
+
+
