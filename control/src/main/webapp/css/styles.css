@@ -210,7 +210,15 @@ table tr:hover {
     margin: 20px;
 }
 
-#graficos canvas {
+#graficos-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin: 20px;
+}
+
+#graficos canvas,
+#graficos-3 canvas{
     width: 100% !important;
     height: 300px !important; /* Ajusta la altura de los gráficos según sea necesario */
 }

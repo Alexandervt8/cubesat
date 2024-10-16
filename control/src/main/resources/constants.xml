@@ -1,206 +1,257 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <constantes>
-                
+                    
+    
     
     
     <constante>
-                                
+                                        
+        
         
         
         <nombre>delta</nombre>
-                                
+                                        
+        
         
         
         <valor>0.43</valor>
-                                
+                                        
+        
         
         
         <unidad>kPa/°C</unidad>
-                            
+                                    
+    
     
     
     </constante>
-                
+                    
+    
     
     
     <constante>
-                                
+                                        
+        
         
         
         <nombre>gamma</nombre>
-                                
+                                        
+        
         
         
         <valor>0.5555</valor>
-                                
+                                        
+        
         
         
         <unidad>kPa/°C</unidad>
-                            
+                                    
+    
     
     
     </constante>
-                
+                    
+    
     
     
     <constante>
-                                
+                                        
+        
         
         
         <nombre>cp</nombre>
-                                
+                                        
+        
         
         
         <valor>1.2255</valor>
-                                
+                                        
+        
         
         
         <unidad>MJ/kg/°C</unidad>
-                            
+                                    
+    
     
     
     </constante>
-                
+                    
+    
     
     
     <constante>
-                                
+                                        
+        
         
         
         <nombre>lambda</nombre>
-                                
+                                        
+        
         
         
         <valor>2.2</valor>
-                                
+                                        
+        
         
         
         <unidad>MJ/kg</unidad>
-                            
+                                    
+    
     
     
     </constante>
-                
+                    
+    
     
     
     <constante>
-                                
+                                        
+        
         
         
         <nombre>rho</nombre>
-                                
+                                        
+        
         
         
         <valor>1.225</valor>
-                                
+                                        
+        
         
         
         <unidad>kg/m³</unidad>
-                            
+                                    
+    
     
     
     </constante>
-                
+                    
+    
     
     
     <constante>
-                                
+                                        
+        
         
         
         <nombre>gravedad</nombre>
-                                
+                                        
+        
         
         
         <valor>9.81</valor>
-                                
+                                        
+        
         
         
         <unidad>m/s²</unidad>
-                            
+                                    
+    
     
     
     </constante>
-                
+                    
+    
     
     
     <constante>
-                                
+                                        
+        
         
         
         <nombre>area_frontral</nombre>
-                                
+                                        
+        
         
         
         <valor>0.5</valor>
-                                
+                                        
+        
         
         
         <unidad>m²</unidad>
-                            
+                                    
+    
     
     
     </constante>
-                
+                    
+    
     
     
     <constante>
-                                
+                                        
+        
         
         
         <nombre>coef_arrastre</nombre>
-                                
+                                        
+        
         
         
         <valor>2.5</valor>
-                                
+                                        
+        
         
         
         <unidad>adimensional</unidad>
-                            
+                                    
+    
     
     
     </constante>
-                
+                    
+    
     
     
     <constante>
-                                
+                                        
+        
         
         
         <nombre>masa_cubesat</nombre>
-                                
+                                        
         
         
-        <valor>12.0</valor>
-                                
+        
+        <valor>10.0</valor>
+                                        
+        
         
         
         <unidad>kg</unidad>
-                            
+                                    
+    
+    
+    
+    </constante>
+                    
+    
+    
+    
+    <constante>
+                                        
+        
+        
+        
+        <nombre>tiempo_descenso</nombre>
+                                        
+        
+        
+        
+        <valor>180.0</valor>
+                                        
+        
+        
+        
+        <unidad>s</unidad>
+                                    
+    
     
     
     </constante>
                 
-    
-    
-    <constante>
-                                
-        
-        
-        <nombre>tiempo_descenso</nombre>
-                                
-        
-        
-        <valor>180.0</valor>
-                                
-        
-        
-        <unidad>s</unidad>
-                            
-    
-    
-    </constante>
-            
+
 
 
 </constantes>

@@ -25,4 +25,14 @@
         <servlet-name>LoRaReceiverServlet</servlet-name>
         <url-pattern>/lora</url-pattern>
     </servlet-mapping>
+    <!-- Configuración del servlet para BMP280ReceiverServlet -->
+    <servlet>
+        <servlet-name>BMP280ReceiverServlet</servlet-name>
+        <servlet-class>com.mycompany.control.BMP280ReceiverServlet</servlet-class>
+    </servlet>
+    <!-- Mapeo del servlet para BMP280ReceiverServlet -->
+    <servlet-mapping>
+        <servlet-name>BMP280ReceiverServlet</servlet-name>
+        <url-pattern>/bmp280</url-pattern>
+    </servlet-mapping>
 </web-app>

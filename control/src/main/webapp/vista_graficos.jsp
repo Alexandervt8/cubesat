@@ -8,6 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script> <!-- Adaptador para fechas -->
     <script src="scripts/funciones_servidor.js"></script>
+
 </head>
 <body>
     <div id="sidebar"></div>
