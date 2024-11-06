@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
+    <session-config>
+        <session-timeout>
+            30
+        </session-timeout>
+    </session-config>
+    <!-- Configuración del servlet para ConstantServlet -->
+    <servlet>
+        <servlet-name>ConstantServlet</servlet-name>
+        <servlet-class>com.mycompany.control.ConstantServlet</servlet-class>
+    </servlet>
+    <!-- Mapeo del servlet para ConstantServlet -->
+    <servlet-mapping>
+        <servlet-name>ConstantServlet</servlet-name>
+        <url-pattern>/constants</url-pattern>
+    </servlet-mapping>
+    <!-- Configuración del servlet para LoRaReceiverServlet -->
+    <servlet>
+        <servlet-name>LoRaReceiverServlet</servlet-name>
+        <servlet-class>com.mycompany.control.LoRaReceiverServlet</servlet-class>
+    </servlet>
+    <!-- Mapeo del servlet para LoRaReceiverServlet -->
+    <servlet-mapping>
+        <servlet-name>LoRaReceiverServlet</servlet-name>
+        <url-pattern>/lora</url-pattern>
+    </servlet-mapping>
+    <!-- Configuración del servlet para BMP280ReceiverServlet -->
+    <servlet>
+        <servlet-name>BMP280ReceiverServlet</servlet-name>
+        <servlet-class>com.mycompany.control.BMP280ReceiverServlet</servlet-class>
+    </servlet>
+    <!-- Mapeo del servlet para BMP280ReceiverServlet -->
+    <servlet-mapping>
+        <servlet-name>BMP280ReceiverServlet</servlet-name>
+        <url-pattern>/bmp280</url-pattern>
+    </servlet-mapping>
+</web-app>

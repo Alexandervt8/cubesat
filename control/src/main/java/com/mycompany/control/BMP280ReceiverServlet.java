@@ -8,8 +8,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
+import utils.Router;
 
-@WebServlet(name = "BMP280ReceiverServlet", urlPatterns = {"/bmp280"})
+@WebServlet(name = "BMP280ReceiverServlet", urlPatterns = {Router.ATMOSPHERE_ENDPOINT})
 public class BMP280ReceiverServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
@@ -20,7 +21,13 @@ public class BMP280ReceiverServlet extends HttpServlet {
         super();
     }
 
-    // Método para recibir datos del BMP280
+    /**
+    * @brief Método para recibir datos del BMP280, datos se reciben del Request en formato: 
+    * {data: "<temperature>, <pressure>, <altitude>"}
+    * @param request Request del Servlet
+    * @param response Response del Servlet
+    */
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String receivedData = request.getParameter("data");
 
@@ -37,16 +44,7 @@ public class BMP280ReceiverServlet extends HttpServlet {
                 System.out.println("Presión: " + pressure + " hPa");
                 System.out.println("Altitud: " + altitude + " m");
 
-                // Crear un objeto JSON con los datos
-                JSONObject jsonResponse = new JSONObject();
-                jsonResponse.put("temperature", temperature);
-                jsonResponse.put("pressure", pressure);
-                jsonResponse.put("altitude", altitude);
-
-                // Enviar respuesta en formato JSON
-                response.setContentType("application/json");
-                PrintWriter out = response.getWriter();
-                out.println(jsonResponse.toString());
+                doGet(request, response);
             } else {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Formato de datos incorrecto");
             }
@@ -56,7 +54,13 @@ public class BMP280ReceiverServlet extends HttpServlet {
         }
     }
 
-    // Método para obtener datos almacenados
+    
+    /**
+     * @brief Método para obtener datos almacenados en formato .json
+     * @param request Request del Servlet
+     * @param response Response dl Servelet
+     */
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Crear un objeto JSON con los datos almacenados
         JSONObject jsonResponse = new JSONObject();

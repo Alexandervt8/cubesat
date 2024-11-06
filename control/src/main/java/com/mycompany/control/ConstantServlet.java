@@ -27,8 +27,9 @@ import org.apache.ignite.cache.query.SqlFieldsQuery;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import utils.Router;
 
-@WebServlet(name = "ConstantServlet", urlPatterns = {"/constants"})
+@WebServlet(name = "ConstantServlet", urlPatterns = {Router.CONSTANTS_ENDPOINT})
 public class ConstantServlet extends HttpServlet {
 
     private Map<String, Double> constants = new HashMap<>();

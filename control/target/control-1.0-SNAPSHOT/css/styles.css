@@ -1,0 +1,228 @@
+/* styles.css */
+
+/* Estilos generales */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #000; /* Fondo negro */
+    color: #00ff00; /* Texto verde brillante */
+    margin: 0;
+    padding: 0;
+}
+
+a {
+    text-decoration: none;
+    color: #00ff00; /* Enlaces en verde */
+}
+
+a:hover {
+    color: #00cc00; /* Enlaces en un verde más oscuro al hacer hover */
+}
+
+/* Estilos para alinear en dos columnas "Datos de sensores" */
+.columna-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.columna {
+    margin-right: 40px; /* Espaciado entre las columnas */
+}
+
+.columna-container p {
+    margin: 0;
+    padding: 10px 15px; /* Añadir espaciado interno */
+    background-color: #111; /* Fondo oscuro */
+    color: #00ff00; /* Texto verde */
+    border: 1px solid #333; /* Borde más oscuro */
+    border-radius: 5px; /* Bordes redondeados */
+}
+
+.columna-container .button {
+    margin-left: 10px;
+}
+
+.columna-container img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px; /* Añadir bordes redondeados a la imagen */
+    max-width: 500px; /* Ancho máximo de la imagen */
+}
+
+/* Opcional: hacer que las columnas se apilen en pantallas pequeñas */
+@media (max-width: 768px) {
+    .columna-container {
+        flex-direction: column;
+    }
+
+    .columna {
+        margin-right: 0;
+        margin-bottom: 20px;
+    }
+}
+
+/* Estilos para radio botón "Datos de sensores" */
+.modo-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #222; /* Fondo oscuro */
+    border-radius: 5px; /* Bordes redondeados */
+}
+
+.modo-container label {
+    display: flex;
+    margin-right: 20px; /* Espaciado entre las etiquetas */
+    font-weight: bold;
+    color: #00ff00; /* Texto verde */
+}
+
+.modo-container label input {
+    margin-left: 10px;
+    flex-grow: 1;
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #444; /* Borde oscuro */
+    border-radius: 4px;
+    box-sizing: border-box;
+    background-color: #111; /* Fondo oscuro en los inputs */
+    color: #00ff00; /* Texto verde */
+}
+
+/* Estilos para el menú lateral */
+#sidebar {
+    width: 250px;
+    background-color: #000; /* Fondo negro */
+    color: #00ff00; /* Texto verde */
+    padding-top: 20px;
+    position: fixed;
+    height: 100%;
+    overflow: auto;
+}
+
+#sidebar h3 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #00ff00; /* Título en verde */
+}
+
+#sidebar ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+#sidebar ul li {
+    padding: 10px;
+    text-align: center;
+}
+
+#sidebar ul li a {
+    display: block;
+    color: #00ff00; /* Enlaces en verde */
+    padding: 10px 20px;
+    transition: all 0.3s ease;
+}
+
+#sidebar ul li a:hover {
+    background-color: #111; /* Fondo oscuro en hover */
+    color: #00cc00; /* Verde más oscuro en hover */
+}
+
+/* Estilos para el área de contenido */
+#content {
+    margin-left: 250px; /* Ajuste para dejar espacio al menú */
+    padding: 20px;
+    background-color: #111; /* Fondo oscuro en el contenido */
+    color: #00ff00; /* Texto verde */
+}
+
+/* Estilos del botón */
+.button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #006400; /* Verde oscuro */
+    color: #00ff00; /* Texto verde brillante */
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Efecto hover */
+.button:hover {
+    background-color: #008000; /* Verde más claro en hover */
+}
+
+/* Estilos para la tabla */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.3); /* Sombra verde suave */
+}
+
+table th, table td {
+    border: 1px solid #444; /* Borde oscuro */
+    padding: 12px;
+    text-align: center;
+    color: #00ff00; /* Texto verde */
+}
+
+table th {
+    background-color: #111; /* Fondo oscuro para las celdas de encabezado */
+}
+
+table tr:nth-child(even) {
+    background-color: #222; /* Fondo más oscuro para filas pares */
+}
+
+table tr:hover {
+    background-color: #333; /* Fondo oscuro en hover */
+}
+
+/* Estilos específicos para la fórmula de Penman-Monteith en la página deseada */
+.formula-container {
+    border: 1px solid #333; /* Borde oscuro */
+    background-color: #111; /* Fondo oscuro */
+    padding: 10px;
+    margin-bottom: 20px;
+    font-family: Arial, sans-serif;
+    color: #00ff00; /* Texto verde */
+}
+
+.formula-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.formula-description {
+    margin-top: 10px;
+}
+
+/* Estilos para el diseño de los gráficos en dos columnas */
+#graficos {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin: 20px;
+}
+
+#graficos-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin: 20px;
+}
+
+#graficos canvas,
+#graficos-3 canvas{
+    width: 100% !important;
+    height: 300px !important; /* Ajusta la altura de los gráficos según sea necesario */
+}
+
+#content {
+    padding: 20px;
+}
