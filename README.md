@@ -34,4 +34,5 @@ Antes de comenzar, asegúrate de tener lo siguiente:
    cd estacion-meteorologica
 
 ## Interfaz
-![Sign Language Alphabet Charts](documentacion/imagenes/interface-1.png)
+![Sign Language Alphabet Charts](documentacion/imagenes/interfaz-1.png)
+![Sign Language Alphabet Charts](documentacion/imagenes/interfaz-2.png)
