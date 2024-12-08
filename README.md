@@ -32,3 +32,6 @@ Antes de comenzar, asegúrate de tener lo siguiente:
    ```bash
    git clone https://github.com/usuario/estacion-meteorologica.git
    cd estacion-meteorologica
+
+## Interfaz
+![Sign Language Alphabet Charts](documentacion/imagenes/interface-1.png)
