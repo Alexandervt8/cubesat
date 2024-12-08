@@ -1,25 +1,46 @@
 import requests
 import time
-import random
+import math
+import random  # Asegúrate de que esta línea esté incluida
 
 # URL del servlet
-url = 'http://192.168.56.1:8080/control/lora'
+url = 'http://192.168.0.7:8080/control/lora'
 
-# Parámetros para el ruido
+# Parámetros para el ruido y el movimiento
 noise_factor_accel = 0.1  # Ruido para aceleración
-noise_factor_gyro = 5.0    # Ruido para giroscopio
+noise_factor_gyro = 5.0   # Ruido para giroscopio
+amplitude_accel = 1.5     # Amplitud del movimiento de aceleración
+amplitude_gyro = 200.0    # Amplitud del movimiento del giroscopio
+frequency = 0.5           # Frecuencia del movimiento (oscilaciones por segundo)
+
+# Inicializa el tiempo base
+start_time = time.time()
 
 # Función para generar datos simulados del MPU6050
-def simulate_mpu6050_data():
-    # Simula la aceleración en X, Y, Z (en g)
-    ax = random.uniform(-1.5, 1.5) + random.uniform(-noise_factor_accel, noise_factor_accel)
-    ay = random.uniform(-1.5, 1.5) + random.uniform(-noise_factor_accel, noise_factor_accel)
-    az = random.uniform(-1.5, 1.5) + random.uniform(-noise_factor_accel, noise_factor_accel)
+def simulate_mpu6050_data(current_time):
+    # Calcula el tiempo transcurrido
+    elapsed_time = current_time - start_time
+
+    # Simula la aceleración en X, Y (en g)
+    ax = amplitude_accel * math.sin(2 * math.pi * frequency * elapsed_time)
+    ay = amplitude_accel * math.cos(2 * math.pi * frequency * elapsed_time)
+
+    # Oscila entre 45° y -45° para Z
+    az = math.sin(2 * math.pi * frequency * elapsed_time) * 0.707  # 0.707 = sin(45°)
+
+    # Añadir ruido a X, Y, Z
+    ax += random.uniform(-noise_factor_accel, noise_factor_accel)
+    ay += random.uniform(-noise_factor_accel, noise_factor_accel)
+    az += random.uniform(-noise_factor_accel, noise_factor_accel)
 
     # Simula la rotación en X, Y, Z (en grados/segundo)
-    gx = random.uniform(-200, 200) + random.uniform(-noise_factor_gyro, noise_factor_gyro)
-    gy = random.uniform(-200, 200) + random.uniform(-noise_factor_gyro, noise_factor_gyro)
-    gz = random.uniform(-200, 200) + random.uniform(-noise_factor_gyro, noise_factor_gyro)
+    gx = amplitude_gyro * math.sin(2 * math.pi * frequency * elapsed_time)
+    gy = amplitude_gyro * math.cos(2 * math.pi * frequency * elapsed_time)
+    gz = amplitude_gyro * math.sin(2 * math.pi * frequency * elapsed_time)
+
+    # Añadir ruido
+    gx += random.uniform(-noise_factor_gyro, noise_factor_gyro)
+    gy += random.uniform(-noise_factor_gyro, noise_factor_gyro)
 
     # Crear una cadena con los datos simulados
     data = f"{ax:.2f},{ay:.2f},{az:.2f},{gx:.2f},{gy:.2f},{gz:.2f}"
@@ -27,17 +48,21 @@ def simulate_mpu6050_data():
 
 # Bucle para enviar datos simulados en intervalos regulares
 while True:
-    simulated_data = simulate_mpu6050_data()
-    # Enviar solicitud POST con los datos simulados
-    response = requests.post(url, data={'data': simulated_data})
+    current_time = time.time()
+    simulated_data = simulate_mpu6050_data(current_time)
 
-    # Mostrar el resultado
-    if response.status_code == 200:
-        print(f"Datos enviados: {simulated_data}")
-        print(f"Respuesta del servidor: {response.text}")
-    else:
-        print(f"Error al enviar los datos: {response.status_code}")
+    # Enviar solicitud POST con los datos simulados
+    try:
+        response = requests.post(url, data={'data': simulated_data}, timeout=5)
+
+        # Mostrar el resultado
+        if response.status_code == 200:
+            print(f"Datos enviados: {simulated_data}")
+            print(f"Respuesta del servidor: {response.text}")
+        else:
+            print(f"Error al enviar los datos: {response.status_code}")
+    except requests.exceptions.RequestException as e:
+        print(f"Error de conexión: {e}")
 
     # Esperar 1 segundo antes de enviar nuevamente
     time.sleep(1)
-
