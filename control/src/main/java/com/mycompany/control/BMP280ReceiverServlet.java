@@ -8,9 +8,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
-import utils.Router;
 
-@WebServlet(name = "BMP280ReceiverServlet", urlPatterns = {Router.ATMOSPHERE_ENDPOINT})
+@WebServlet(name = "BMP280ReceiverServlet", urlPatterns = {"/bmp280"})
 public class BMP280ReceiverServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
  
@@ -21,14 +20,9 @@ public class BMP280ReceiverServlet extends HttpServlet {
         super();
     }
 
-    /**
-    * @brief Método para recibir datos del BMP280, datos se reciben del Request en formato: 
-    * {data: "<temperature>, <pressure>, <altitude>"}
-    * @param request Request del Servlet
-    * @param response Response del Servlet
-    */
-    @Override
+    // Método para recibir datos de sensores
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // Obtener datos enviados en la solicitud
         String receivedData = request.getParameter("data");
 
         if (receivedData != null && !receivedData.isEmpty()) {
@@ -44,25 +38,21 @@ public class BMP280ReceiverServlet extends HttpServlet {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Formato de datos incorrecto");
             }
         } else {
-            // Si no se reciben datos
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "No se recibieron datos");
         }
     }
 
-    
-    /**
-     * @brief Método para obtener datos almacenados en formato .json
-     * @param request Request del Servlet
-     * @param response Response dl Servelet
-     */
-    @Override
+    // Método para obtener datos almacenados
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Crear un objeto JSON con los datos almacenados
+        // Crear un objeto JSON con las claves abreviadas y datos almacenados
         JSONObject jsonResponse = new JSONObject();
+        // Procesar los datos
+        
+
         jsonResponse.put("tmp", data.temperature != null ? data.temperature : "0");
+        jsonResponse.put("hmd", data.humidity != null ? data.humidity : "0");
         jsonResponse.put("prs", data.pressure != null ? data.pressure : "0");
         jsonResponse.put("alt", data.altitude != null ? data.altitude : "0");
-        jsonResponse.put("hmd", data.humidity != null ? data.humidity : "0");
 
         // Enviar respuesta en formato JSON
         response.setContentType("application/json");
@@ -70,3 +60,5 @@ public class BMP280ReceiverServlet extends HttpServlet {
         out.println(jsonResponse.toString());
     }
 }
+
+
