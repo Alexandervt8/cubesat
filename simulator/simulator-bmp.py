@@ -4,7 +4,8 @@ import time
 import math
 
 # URL del servlet BMP280ReceiverServlet (ajusta la URL según la configuración de tu servidor)
-url = 'http://192.168.0.7:8080/control/bmp280'
+# url = 'http://192.168.0.7:8080/control/bmp280'
+url = 'http://localhost:8080/control/bmp280'
 
 # Constantes de la simulación
 g = 9.81  # Aceleración debido a la gravedad (m/s²)
@@ -40,7 +41,9 @@ def enviar_datos():
     while True:
         altitud, velocidad = calcular_altitud(tiempo)
         temperatura, presion = generar_datos_simulados()
-        data = f"data=tmp={round(temperatura, 1)},hmd={round(random.uniform(30.0, 70.0), 1)},prs={round(presion, 1)},alt={round(altitud, 1)}"
+        # data = f"data=tmp={round(temperatura, 1)},hmd={round(random.uniform(30.0, 70.0), 1)},prs={round(presion, 1)},alt={round(altitud, 1)}"
+        data = f"data={round(temperatura, 1)},{round(random.uniform(30.0, 70.0), 1)},{round(presion, 1)},{round(altitud, 1)}"
+
         
         headers = {"Content-Type": "application/x-www-form-urlencoded"}
 

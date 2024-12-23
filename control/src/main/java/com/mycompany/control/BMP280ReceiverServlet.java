@@ -13,9 +13,9 @@ import utils.Router;
 @WebServlet(name = "BMP280ReceiverServlet", urlPatterns = {Router.ATMOSPHERE_ENDPOINT})
 public class BMP280ReceiverServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-
+ 
     // Variables para almacenar los datos del sensor
-    private String temperature, pressure, altitude;
+    private Sensor_BMP data;
 
     public BMP280ReceiverServlet() {
         super();
@@ -32,18 +32,13 @@ public class BMP280ReceiverServlet extends HttpServlet {
         String receivedData = request.getParameter("data");
 
         if (receivedData != null && !receivedData.isEmpty()) {
-            String[] sensorData = receivedData.split(",");
-            if (sensorData.length == 3) {
-                // Procesar los datos
-                temperature = sensorData[0];
-                pressure = sensorData[1];
-                altitude = sensorData[2];
-
-                System.out.println("Datos del BMP280 recibidos:");
-                System.out.println("Temperatura: " + temperature + " °C");
-                System.out.println("Presión: " + pressure + " hPa");
-                System.out.println("Altitud: " + altitude + " m");
-
+            
+            Adapter_StrToBMP280 adp = new Adapter_StrToBMP280();
+            adp.setData(receivedData);
+            Sensor_BMP received = Facade_Sensor.getInstance().ProcessBMP(adp);
+            
+            if (received != null) {
+                data = received;
                 doGet(request, response);
             } else {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Formato de datos incorrecto");
@@ -64,9 +59,10 @@ public class BMP280ReceiverServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Crear un objeto JSON con los datos almacenados
         JSONObject jsonResponse = new JSONObject();
-        jsonResponse.put("temperature", temperature != null ? temperature : "0");
-        jsonResponse.put("pressure", pressure != null ? pressure : "0");
-        jsonResponse.put("altitude", altitude != null ? altitude : "0");
+        jsonResponse.put("tmp", data.temperature != null ? data.temperature : "0");
+        jsonResponse.put("prs", data.pressure != null ? data.pressure : "0");
+        jsonResponse.put("alt", data.altitude != null ? data.altitude : "0");
+        jsonResponse.put("hmd", data.humidity != null ? data.humidity : "0");
 
         // Enviar respuesta en formato JSON
         response.setContentType("application/json");

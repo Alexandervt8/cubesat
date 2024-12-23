@@ -28,8 +28,8 @@ public class Sensor_BMP {
         }
         
         temperature = info[0];
-        pressure = info[1];
-        altitude = info[2];
-        humidity = info[3];
+        pressure = info[2];
+        altitude = info[3];
+        humidity = info[1];
     }
 }
