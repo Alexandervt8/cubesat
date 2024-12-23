@@ -8,65 +8,65 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
+import utils.Router;
 
-@WebServlet(name = "BMP280ReceiverServlet", urlPatterns = {"/bmp280"})
+@WebServlet(name = "BMP280ReceiverServlet", urlPatterns = {Router.ATMOSPHERE_ENDPOINT})
 public class BMP280ReceiverServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     // Variables para almacenar los datos del sensor
-    private String tmp, prs, hmd, alt;
+    private String temperature, pressure, altitude;
 
     public BMP280ReceiverServlet() {
         super();
     }
 
-    // Método para recibir datos de sensores
+    /**
+    * @brief Método para recibir datos del BMP280, datos se reciben del Request en formato: 
+    * {data: "<temperature>, <pressure>, <altitude>"}
+    * @param request Request del Servlet
+    * @param response Response del Servlet
+    */
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Obtener datos enviados en la solicitud
         String receivedData = request.getParameter("data");
 
         if (receivedData != null && !receivedData.isEmpty()) {
             String[] sensorData = receivedData.split(",");
-            if (sensorData.length == 4) {
+            if (sensorData.length == 3) {
                 // Procesar los datos
-                tmp = sensorData[0].split("=")[1];
-                hmd = sensorData[1].split("=")[1];
-                prs = sensorData[2].split("=")[1];
-                alt = sensorData[3].split("=")[1];
+                temperature = sensorData[0];
+                pressure = sensorData[1];
+                altitude = sensorData[2];
 
                 System.out.println("Datos del BMP280 recibidos:");
-                System.out.println("Temperatura (tmp): " + tmp + "°C");
-                System.out.println("Humedad (hmd): " + hmd + "%");
-                System.out.println("Presión (prs): " + prs + " hPa");
-                System.out.println("Altitud (alt): " + alt + " m");
+                System.out.println("Temperatura: " + temperature + " °C");
+                System.out.println("Presión: " + pressure + " hPa");
+                System.out.println("Altitud: " + altitude + " m");
 
-                // Crear un objeto JSON con claves abreviadas
-                JSONObject jsonResponse = new JSONObject();
-                jsonResponse.put("tmp", tmp);
-                jsonResponse.put("hmd", hmd);
-                jsonResponse.put("prs", prs);
-                jsonResponse.put("alt", alt);
-
-                // Enviar respuesta en formato JSON
-                response.setContentType("application/json");
-                PrintWriter out = response.getWriter();
-                out.println(jsonResponse.toString());
+                doGet(request, response);
             } else {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Formato de datos incorrecto");
             }
         } else {
+            // Si no se reciben datos
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "No se recibieron datos");
         }
     }
 
-    // Método para obtener datos almacenados
+    
+    /**
+     * @brief Método para obtener datos almacenados en formato .json
+     * @param request Request del Servlet
+     * @param response Response dl Servelet
+     */
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Crear un objeto JSON con las claves abreviadas y datos almacenados
+        // Crear un objeto JSON con los datos almacenados
         JSONObject jsonResponse = new JSONObject();
-        jsonResponse.put("tmp", tmp != null ? tmp : "0");
-        jsonResponse.put("hmd", hmd != null ? hmd : "0");
-        jsonResponse.put("prs", prs != null ? prs : "0");
-        jsonResponse.put("alt", alt != null ? alt : "0");
+        jsonResponse.put("temperature", temperature != null ? temperature : "0");
+        jsonResponse.put("pressure", pressure != null ? pressure : "0");
+        jsonResponse.put("altitude", altitude != null ? altitude : "0");
 
         // Enviar respuesta en formato JSON
         response.setContentType("application/json");
@@ -74,5 +74,3 @@ public class BMP280ReceiverServlet extends HttpServlet {
         out.println(jsonResponse.toString());
     }
 }
-
-
