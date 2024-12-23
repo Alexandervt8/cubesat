@@ -8,9 +8,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
-import utils.Router;
 
-@WebServlet(name = "LoRaReceiverServlet", urlPatterns = {Router.LORA_ENDPOINT})
+@WebServlet(name = "LoRaReceiverServlet", urlPatterns = {"/lora"})
 public class LoRaReceiverServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
