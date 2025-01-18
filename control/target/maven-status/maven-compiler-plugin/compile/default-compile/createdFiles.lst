@@ -1,0 +1,6 @@
+com\mycompany\control\resources\JakartaEE10Resource.class
+com\mycompany\control\BMP280ReceiverServlet.class
+com\mycompany\control\ConstantServlet$1.class
+com\mycompany\control\ConstantServlet.class
+com\mycompany\control\LoRaReceiverServlet.class
+com\mycompany\control\IgniteUtil.class

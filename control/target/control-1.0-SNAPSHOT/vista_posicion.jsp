@@ -74,7 +74,7 @@
                     <div class="bar-container">
                         <div class="bar" id="temperature-bar"></div>
                     </div>
-                    <span id="temperature-value">0°C</span>
+                    <span id="temperature-value">100 °C</span>
                 </div>
                 <div class="sensor">
                     <label>Presión (hPa):</label>
@@ -88,7 +88,21 @@
                     <div class="bar-container">
                         <div class="bar" id="humidity-bar"></div>
                     </div>
-                    <span id="humidity-value">0%</span>
+                    <span id="humidity-value">0 %</span>
+                </div>
+                <div class="sensor">
+                    <label>Radiacion Solar (MJ/m&sup2;/día):</label>
+                    <div class="bar-container">
+                        <div class="bar" id="radiacion-bar"></div>
+                    </div>
+                    <span id="radiacion-value">0 MJ/m&sup2;/día</span>
+                </div>
+                <div class="sensor">
+                    <label>Velocidad del Viento (m/s):</label>
+                    <div class="bar-container">
+                        <div class="bar" id="velocidad-viento-bar"></div>
+                    </div>
+                    <span id="velocidad-viento-value">10 m/s</span>
                 </div>
             </div>
             <div>

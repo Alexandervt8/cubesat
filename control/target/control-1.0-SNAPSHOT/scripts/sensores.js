@@ -70,6 +70,42 @@ function updateBars(data) {
     } else {
         console.error('updateBars: No se encontró el elemento humidity-bar');
     }
+    
+    // Radiación Solar
+    const radiacion = parseFloat(data.rad) || 0; // Directamente desde data.rad
+    console.log(`updateBars: Radiación Solar recibida: ${radiacion}`);
+    const radiacionPercentage = Math.min((radiacion / 40) * 100, 100); // Asumiendo un valor máximo de 40 MJ/m²/día
+    const radiacionBar = document.getElementById('radiacion-bar');
+    if (radiacionBar) {
+        radiacionBar.style.width = `${radiacionPercentage}%`;
+        radiacionBar.style.backgroundColor =
+            radiacion < 10
+                ? 'red'
+                : radiacion < 20
+                ? 'yellow'
+                : 'green';
+        document.getElementById('radiacion-value').textContent = `${radiacion} MJ/m²/día`;
+    } else {
+        console.error('updateBars: No se encontró el elemento radiacion-bar');
+    }
+
+    // Velocidad del Viento
+    const viento = parseFloat(data.vnt) || 0; // Directamente desde data.vnt
+    console.log(`updateBars: Velocidad del Viento recibida: ${viento}`);
+    const vientoPercentage = Math.min((viento / 20) * 100, 100); // Asumiendo un valor máximo de 20 m/s
+    const vientoBar = document.getElementById('velocidad-viento-bar');
+    if (vientoBar) {
+        vientoBar.style.width = `${vientoPercentage}%`;
+        vientoBar.style.backgroundColor =
+            viento < 5
+                ? 'green'
+                : viento < 10
+                ? 'yellow'
+                : 'red';
+        document.getElementById('velocidad-viento-value').textContent = `${viento} m/s`;
+    } else {
+        console.error('updateBars: No se encontró el elemento velocidad-viento-bar');
+    }
 }
 
 
