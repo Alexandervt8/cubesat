@@ -12,9 +12,9 @@ import org.json.JSONObject;
 @WebServlet(name = "BMP280ReceiverServlet", urlPatterns = {"/bmp280"})
 public class BMP280ReceiverServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
- 
+
     // Variables para almacenar los datos del sensor
-    private Sensor_BMP data;
+    private String tmp, prs, hmd, rad, vnt, alt;
 
     public BMP280ReceiverServlet() {
         super();
@@ -26,14 +26,37 @@ public class BMP280ReceiverServlet extends HttpServlet {
         String receivedData = request.getParameter("data");
 
         if (receivedData != null && !receivedData.isEmpty()) {
-            
-            Adapter_StrToBMP280 adp = new Adapter_StrToBMP280();
-            adp.setData(receivedData);
-            Sensor_BMP received = Facade_Sensor.getInstance().ProcessBMP(adp);
-            
-            if (received != null) {
-                data = received;
-                doGet(request, response);
+            String[] sensorData = receivedData.split(",");
+            if (sensorData.length == 6) {
+                // Procesar los datos
+                tmp = sensorData[0].split("=")[1];
+                prs = sensorData[1].split("=")[1];
+                hmd = sensorData[2].split("=")[1];
+                rad = sensorData[3].split("=")[1];
+                vnt = sensorData[4].split("=")[1];
+                alt = sensorData[5].split("=")[1];
+
+                System.out.println("Datos del BMP280 recibidos:");
+                System.out.println("Temperatura (tmp): " + tmp + "°C");
+                System.out.println("Presión (prs): " + prs + " hPa");
+                System.out.println("Humedad (hmd): " + hmd + "%");
+                System.out.println("Radiación Solar (rad): " + rad + " MJ/m²/día");
+                System.out.println("Velocidad del Viento (vel): " + vnt + " m/s");
+                System.out.println("Altitud (alt): " + alt + " m");
+
+                // Crear un objeto JSON con claves abreviadas
+                JSONObject jsonResponse = new JSONObject();
+                jsonResponse.put("tmp", tmp);
+                jsonResponse.put("prs", prs);
+                jsonResponse.put("hmd", hmd);
+                jsonResponse.put("rad", rad); 
+                jsonResponse.put("vnt", vnt); 
+                jsonResponse.put("alt", alt);
+
+                // Enviar respuesta en formato JSON
+                response.setContentType("application/json");
+                PrintWriter out = response.getWriter();
+                out.println(jsonResponse.toString());
             } else {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Formato de datos incorrecto");
             }
@@ -46,13 +69,12 @@ public class BMP280ReceiverServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Crear un objeto JSON con las claves abreviadas y datos almacenados
         JSONObject jsonResponse = new JSONObject();
-        // Procesar los datos
-        
-
-        jsonResponse.put("tmp", data.temperature != null ? data.temperature : "0");
-        jsonResponse.put("hmd", data.humidity != null ? data.humidity : "0");
-        jsonResponse.put("prs", data.pressure != null ? data.pressure : "0");
-        jsonResponse.put("alt", data.altitude != null ? data.altitude : "0");
+        jsonResponse.put("tmp", tmp != null ? tmp : "0");
+        jsonResponse.put("prs", prs != null ? prs : "0");
+        jsonResponse.put("hmd", hmd != null ? hmd : "0");
+        jsonResponse.put("rad", rad != null ? rad : "0"); 
+        jsonResponse.put("vnt", vnt != null ? vnt : "0"); 
+        jsonResponse.put("alt", alt != null ? alt : "0");
 
         // Enviar respuesta en formato JSON
         response.setContentType("application/json");
