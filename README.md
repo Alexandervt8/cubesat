@@ -30,8 +30,8 @@ Antes de comenzar, asegúrate de tener lo siguiente:
 1. **Clona el repositorio:**
 
    ```bash
-   git clone https://github.com/usuario/estacion-meteorologica.git
-   cd estacion-meteorologica
+   git clone https://github.com/usuario/cubesat.git
+   cd estacion
 
 ## Interfaz
 ![Sign Language Alphabet Charts](documentacion/imagenes/interfaz-1.png)
