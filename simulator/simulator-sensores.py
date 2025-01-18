@@ -24,6 +24,12 @@ def generar_datos_simulados():
     presion = round(random.uniform(950, 1050.0), 2)   # Presión entre 950 y 1050 hPa
     return temperatura, presion
 
+# Función para generar los datos simulados de radiación solar y velocidad del viento
+def generar_datos_simulados_radiacion_viento():
+    radiacion_solar = round(random.uniform(0.0, 30.0), 2)  # Radiación solar entre 0 y 30 MJ/m²/día
+    velocidad_viento = round(random.uniform(0.0, 20.0), 2)  # Velocidad del viento entre 0 y 20 m/s
+    return radiacion_solar, velocidad_viento
+
 # Función para calcular la altitud de acuerdo a la simulación de caída con paracaídas
 def calcular_altitud(t):
     global altitud, velocidad
@@ -40,7 +46,16 @@ def enviar_datos():
     while True:
         altitud, velocidad = calcular_altitud(tiempo)
         temperatura, presion = generar_datos_simulados()
-        data = f"data=tmp={round(temperatura, 1)},prs={round(presion, 1)},hmd={round(random.uniform(30.0, 70.0), 1)},alt={round(altitud, 1)}"
+        radiacion, velocidad_viento = generar_datos_simulados_radiacion_viento()
+        # Construir la cadena de datos con todos los valores
+        data = (
+            f"data=tmp={round(temperatura, 1)},"
+            f"prs={round(presion, 1)},"
+            f"hmd={round(random.uniform(30.0, 70.0), 1)},"
+            f"rad={round(radiacion, 1)},"
+            f"vnt={round(velocidad_viento, 1)},"
+            f"alt={round(altitud, 1)}"
+        )
         
         headers = {"Content-Type": "application/x-www-form-urlencoded"}
 
