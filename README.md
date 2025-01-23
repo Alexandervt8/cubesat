@@ -36,3 +36,4 @@ Antes de comenzar, asegúrate de tener lo siguiente:
 ## Interfaz
 ![Sign Language Alphabet Charts](documentacion/imagenes/interfaz-1.png)
 ![Sign Language Alphabet Charts](documentacion/imagenes/interfaz-2.png)
+![Sign Language Alphabet Charts](documentacion/imagenes/interfaz-3.png)
