@@ -16,8 +16,6 @@
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="scripts/sensores.js"></script>
 
-
-  
 </head>
 <body>
 

@@ -3,174 +3,280 @@
 <head>
     <meta charset="UTF-8">
     <title>Control y Monitoreo de CubeSat</title>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="stylesheet" href="css/styles.css">
     <script src="scripts/control_cubesat.js"></script>
+    <style> 
+        canvas {
+            background: #111111;
+            border: 1px solid #ccc;
+        }
+        
+        #canvas-cubesat {
+            width: 100%; /* Ajusta el canvas al ancho del contenedor */
+            width: 100%;
+            display: block; /* Elimina espacios blancos adicionales */
+            border: 1px solid black; /* Opcional: Borde visible para el canvas */
+        }
+
+        .led {
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            margin-left: 10px;
+        }
+
+        .led-rojo {
+            background-color: red;
+        }
+
+        .led-verde {
+            background-color: green;
+        }
+    </style>
 </head>
 <body>
-    <div id="sidebar"></div> <!-- Menú lateral dinámico -->
-
+    <div id="sidebar"></div> <!-- Aquí se cargará dinámicamente el menú -->
     <div id="content">
-        <h1>Monitoreo de Descenso del CubeSat</h1>
-
-        <div class="modo-container">
-            <label>
-                <input type="radio" name="modo" value="automatico" onchange="cambiarModo(this.value)"> Modo Automático
-            </label>
-            <label>
-                <input type="radio" name="modo" value="manual" onchange="cambiarModo(this.value)" checked> Modo Manual
-            </label>
-        </div>
-        
-        <button onclick="iniciarMonitoreo()" class="button modo_b">Iniciar Monitoreo</button>
-        <button onclick="detenerMonitoreo()" class="button modo_b">Detener Monitoreo</button>
-        <button onclick="activarServomotores()" class="button modo_b">Activar Servomotores</button>
-
+        <h1>Control y Monitoreo de CubeSat</h1>
         <div class="columna-container">
-            <!-- Lecturas de Sensores en tiempo real -->
-            <div id="sensores" class="columna">
+            <!-- Columna 1: Lecturas de Sensores y Control de Servomotores -->
+            <div class="columna columna-25">
                 <h2>Lecturas de Sensores</h2>
-                <p>Altitud <strong>(m)</strong>: <span id="altitud"></span></p>
-                <p>Velocidad de Descenso <strong>(m/s)</strong>: <span id="velocidad-descenso"></span></p>
-                <p>Presión Atmosférica <strong>(kPa)</strong>: <span id="presion-atmosferica"></span></p>
-                <p>Temperatura Externa <strong>(°C)</strong>: <span id="temperatura"></span></p>
-                <p>Orientación <strong>(°)</strong>: <span id="orientacion"></span></p>
-            </div>
+                <p>Altitud (m): <span id="altitud">-</span></p>
+                <p>Velocidad <br>de Descenso (m/s): <span id="velocidad-descenso">-</span></p>
+                <p>Presión <br>Atmosférica (kPa): <span id="presion-atmosferica">-</span></p>
+                <p>Temperatura <br>Externa (°C): <span id="temperatura">-</span></p>
 
-            <!-- Estado de Servomotores -->
-            <div id="servomotores" class="columna">
                 <h2>Control de Servomotores</h2>
-                <p>Motor 1: <span id="estado-motor1">Desactivado</span></p>
-                <p>Motor 2: <span id="estado-motor2">Desactivado</span></p>
-                <p>Motor 3: <span id="estado-motor3">Desactivado</span></p>
-                <p>Motor 4: <span id="estado-motor4">Desactivado</span></p>
+                <p>Motor 1: <span id="estado-motor1">Desactivado</span> <span class="led led-rojo" id="led-motor1"></span></p>
+                <p>Motor 2: <span id="estado-motor2">Desactivado</span> <span class="led led-rojo" id="led-motor2"></span></p>
+                <p>Motor 3: <span id="estado-motor3">Desactivado</span> <span class="led led-rojo" id="led-motor3"></span></p>
+                <p>Motor 4: <span id="estado-motor4">Desactivado</span> <span class="led led-rojo" id="led-motor4"></span></p>
             </div>
 
-            <!-- Gráficos en tiempo real -->
-            <div id="graficos" class="columna">
-                <h2>Gráficos en Tiempo Real</h2>
-                <canvas id="grafico-altitud" width="400" height="200"></canvas>
-                <canvas id="grafico-velocidad" width="400" height="200"></canvas>
+            <!-- Columna 2: Dibujo del CubeSat -->
+            <div class="columna columna-50">
+                <canvas id="canvas-cubesat"></canvas>
             </div>
-        </div>
 
-        <div class="alertas">
-            <h2>Alertas de Seguridad</h2>
-            <p id="alerta-descenso">Estado del Descenso: <span id="estado-descenso">Estable</span></p>
-            <p id="alerta-aterrizaje">Distancia al suelo: <span id="distancia-suelo"></span> m</p>
-            <p id="alerta-servomotores">Servomotores: <span id="estado-servomotores">Listos</span></p>
+            <!-- Columna 3: Espacio adicional o futuras funcionalidades -->
+            <div class="columna columna-25">
+                <h2>Control de desacople</h2>
+                <p>Monitoreo de disco</p>
+                <canvas id="canvas-circulos" width="150" height="150"></canvas>
+            </div>
         </div>
     </div>
-   <script src="menu.js"></script>
+    <script src="menu.js"></script> <!-- Incluir el archivo JavaScript del menú -->
     <script>
-        let intervalId;
-        let altitudActual = 1000; // Valor inicial de ejemplo
+        // Dibujo del CubeSat
+        const canvas = document.getElementById('canvas-cubesat');
+        const ctx = canvas.getContext('2d');
+        
+        function ajustarCanvas() {
+            const canvas = document.getElementById('canvas-cubesat');
+            const contenedor = canvas.parentElement;
 
-        function cambiarModo(modo) {
-            const botones = document.querySelectorAll('.button');
-            if (modo === 'automatico') {
-                botones.forEach(boton => boton.disabled = true);
-                intervalId = setInterval(() => {
-                    actualizarLecturas(); // Función que actualiza las lecturas de sensores
-                }, 2000); // Actualización cada 2 segundos
+            // Obtener dimensiones del contenedor
+            const ancho = contenedor.offsetWidth;
+
+            // Ajustar dimensiones del canvas
+            canvas.width = ancho; // Ancho interno del canvas
+            canvas.height = ancho; // Altura igual al ancho para mantener cuadrado
+
+            // Redibujar contenido del canvas
+            dibujarCubeSat(canvas);
+        }
+
+        function dibujarCubeSat() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Dimensiones dinámicas del contenedor principal
+            const containerMargin = canvas.width * 0.23; // Margen desde el borde del canvas
+            const containerX = containerMargin; // Posición X basada en el margen
+            const containerY = containerMargin; // Posición Y basada en el margen
+            const containerWidth = canvas.width - 2 * containerMargin; // Ancho dinámico
+            const containerHeight = canvas.height - 2 * containerMargin; // Altura dinámica
+
+            // Dibujar el cuadrado principal (contenedor)
+            ctx.strokeStyle = 'white';
+            ctx.strokeRect(containerX, containerY, containerWidth, containerHeight);
+
+            // Dimensiones de la caja contenedora de paracaídas
+            const parachuteBoxMargin = containerWidth * 0.18; // Margen proporcional
+            const parachuteX = containerX + parachuteBoxMargin;
+            const parachuteY = containerY + parachuteBoxMargin;
+            const parachuteWidth = containerWidth - 2 * parachuteBoxMargin;
+            const parachuteHeight = containerHeight - 2 * parachuteBoxMargin;
+
+            // Dibujar la caja contenedora de paracaídas
+            ctx.fillStyle = 'orange';
+            ctx.fillRect(parachuteX, parachuteY, parachuteWidth, parachuteHeight);
+            ctx.strokeStyle = 'black';
+            ctx.strokeRect(parachuteX, parachuteY, parachuteWidth, parachuteHeight);
+
+            // Dimensiones de los brazos
+            const armThickness = containerWidth * 0.05; // Grosor proporcional
+            const armLength = containerWidth * 0.4; // Longitud proporcional
+
+            ctx.fillStyle = 'black';
+            ctx.fillRect(containerX - armLength, containerY + containerHeight / 2 - armThickness / 2, armLength, armThickness); // Izquierda
+            ctx.fillRect(containerX + containerWidth, containerY + containerHeight / 2 - armThickness / 2, armLength, armThickness); // Derecha
+            ctx.fillRect(containerX + containerWidth / 2 - armThickness / 2, containerY - armLength, armThickness, armLength); // Arriba
+            ctx.fillRect(containerX + containerWidth / 2 - armThickness / 2, containerY + containerHeight, armThickness, armLength); // Abajo
+
+            // Dibujar los círculos en los extremos de los brazos
+            const circleRadius = containerWidth * 0.05; // Radio proporcional
+            ctx.fillStyle = 'gray';
+
+            // Círculo izquierdo
+            ctx.beginPath();
+            ctx.arc(containerX - armLength + circleRadius, containerY + containerHeight / 2, circleRadius, 0, 2 * Math.PI);
+            ctx.fill();
+
+            // Círculo derecho
+            ctx.beginPath();
+            ctx.arc(containerX + containerWidth + armLength - circleRadius, containerY + containerHeight / 2, circleRadius, 0, 2 * Math.PI);
+            ctx.fill();
+
+            // Círculo arriba
+            ctx.beginPath();
+            ctx.arc(containerX + containerWidth / 2, containerY - armLength + circleRadius, circleRadius, 0, 2 * Math.PI);
+            ctx.fill();
+
+            // Círculo abajo
+            ctx.beginPath();
+            ctx.arc(containerX + containerWidth / 2, containerY + containerHeight + armLength - circleRadius, circleRadius, 0, 2 * Math.PI);
+            ctx.fill();
+
+            // Dibujar el paracaídas ajustado dentro del contenedor principal
+            const parachuteRadius = (containerWidth - 2 * parachuteBoxMargin) / 2;
+            ctx.beginPath();
+            ctx.arc(containerX + containerWidth / 2, containerY + containerHeight / 2, parachuteRadius, 0, 2 * Math.PI);
+            ctx.fillStyle = 'blue';
+            ctx.fill();
+            ctx.stroke();
+        }
+
+
+        dibujarCubeSat();
+        // Asegurarse de ajustar el canvas al inicio
+        ajustarCanvas();
+        
+        // Obtener el canvas de la tercera columna para dibujar los círculos
+        const canvasCirculos = document.getElementById('canvas-circulos');
+        const ctxCirculos = canvasCirculos.getContext('2d');
+
+        // Función para dibujar los círculos con radio y grados personalizados
+        function dibujarCirculos(radio, radio2, grados, grados2) {
+            ctxCirculos.clearRect(0, 0, canvasCirculos.width, canvasCirculos.height); // Limpiar el canvas antes de dibujar
+
+            // Calcular radios dinámicos en función del tamaño del canvas
+            const radioMaximo = Math.min(canvasCirculos.width, canvasCirculos.height) / 2; // El radio será la mitad del tamaño más pequeño (ancho o alto)
+
+            // Ajustar el radio según el parámetro recibido
+            const radioFinal = radioMaximo * radio; 
+            const radioFinal2 = radioMaximo * radio2; 
+
+            // Calcular el ángulo en radianes para los grados dados
+            const radianes = grados * Math.PI / 180; // Convertir grados a radianes
+            const radianes2 = grados2 * Math.PI / 180; // Convertir grados a radianes
+
+            // Dibujar el arco del círculo (por ejemplo, 15 grados)
+            const x = canvasCirculos.width / 2;
+            const y = canvasCirculos.height / 2;
+
+            // Dibujar el círculo coloreado según el ángulo
+            ctxCirculos.beginPath();
+            ctxCirculos.arc(x, y, radioFinal, 0, radianes); // Usar los grados en radianes
+            ctxCirculos.lineTo(x, y); // Volver al centro del círculo para cerrar la forma
+            ctxCirculos.fillStyle = 'red'; // Color rojo
+            ctxCirculos.fill(); // Rellenar el área
+            ctxCirculos.strokeStyle = 'darkred'; // Color del borde
+            ctxCirculos.lineWidth = 1;
+            ctxCirculos.stroke(); // Dibujar el borde
+
+            // Círculo naranja de tamaño dinámico, pintado en su totalidad
+            const radioNaranja = radioMaximo * 0.8; // Radio más pequeño
+            ctxCirculos.beginPath();
+            ctxCirculos.arc(x, y, radioNaranja, 0, 2 * Math.PI); // Un círculo completo
+            ctxCirculos.fillStyle = 'orange';
+            ctxCirculos.fill();
+            ctxCirculos.strokeStyle = 'darkorange';
+            ctxCirculos.lineWidth = 1;
+            ctxCirculos.stroke();
+            
+            // Dibujar el círculo coloreado según el ángulo
+            ctxCirculos.beginPath();
+            ctxCirculos.arc(x, y, radioFinal2, 0, radianes2); // Usar los grados en radianes
+            ctxCirculos.lineTo(x, y); // Volver al centro del círculo para cerrar la forma
+            ctxCirculos.fillStyle = 'red'; // Color rojo
+            ctxCirculos.fill(); // Rellenar el área
+            ctxCirculos.strokeStyle = 'darkred'; // Color del borde
+            ctxCirculos.lineWidth = 1;
+            ctxCirculos.stroke(); // Dibujar el borde
+            
+            // Círculo verde, 1/8 más pequeño que el radio naranja
+            const radioVerde = radioNaranja * 0.6; // Radio 1/8 más pequeño
+            ctxCirculos.beginPath();
+            ctxCirculos.arc(x, y, radioVerde, 0, 2 * Math.PI); // Un círculo completo
+            ctxCirculos.fillStyle = 'orange';
+            ctxCirculos.fill();
+            ctxCirculos.strokeStyle = 'darkgreen';
+            ctxCirculos.lineWidth = 1;
+            ctxCirculos.stroke();
+        }
+
+
+        // Ajustar el tamaño del canvas para la tercera columna
+        function ajustarCanvasCirculos() {
+            const contenedorCirculos = canvasCirculos.parentElement;
+            const ancho = contenedorCirculos.offsetWidth;  // Obtener el ancho del contenedor
+
+            // Ajustar las dimensiones del canvas
+            canvasCirculos.width = ancho;
+            canvasCirculos.height = ancho; // Mantener el canvas cuadrado
+
+            // Redibujar los círculos con el tamaño actualizado
+            dibujarCirculos(0.9, 0.6, 15, 180);  
+        }
+
+        // Llamar a la función para ajustar el canvas cuando la ventana se redimensione
+        window.addEventListener('resize', ajustarCanvasCirculos);
+
+        // Asegurarse de ajustar el canvas al inicio
+        ajustarCanvasCirculos();
+
+
+        // Ajustar el canvas cuando el tamaño de la ventana cambie
+        window.addEventListener('resize', ajustarCanvas);
+
+        // Cambiar el color del LED basado en el estado de los motores
+        function actualizarEstadoMotor(motorId, estado) {
+            const motorSpan = document.getElementById(`estado-motor${motorId}`);
+            const led = document.getElementById(`led-motor${motorId}`);
+
+            if (estado === 'activado') {
+                motorSpan.innerText = 'Activado';
+                led.className = 'led led-verde';
             } else {
-                botones.forEach(boton => boton.disabled = false);
-                clearInterval(intervalId);
+                motorSpan.innerText = 'Desactivado';
+                led.className = 'led led-rojo';
             }
         }
 
-        function iniciarMonitoreo() {
-            console.log("Monitoreo iniciado");
-            actualizarLecturas();
-        }
+        // Simulación de activación de motores
+        setTimeout(() => {
+            actualizarEstadoMotor(1, 'activado');
+            actualizarEstadoMotor(2, 'activado');
+        }, 3000);
 
-        function detenerMonitoreo() {
-            console.log("Monitoreo detenido");
-            clearInterval(intervalId);
-        }
-
-        function activarServomotores() {
-            const distanciaSuelo = calcularDistanciaSuelo();
-            if (distanciaSuelo <= 3) {
-                // Activar motores a 3 metros del suelo
-                console.log("Activando servomotores para aterrizaje suave");
-                document.getElementById("estado-motor1").innerText = "Activado";
-                document.getElementById("estado-motor2").innerText = "Activado";
-                document.getElementById("estado-motor3").innerText = "Activado";
-                document.getElementById("estado-motor4").innerText = "Activado";
-                document.getElementById("estado-servomotores").innerText = "Activados";
-            } else {
-                console.log("Distancia al suelo no es suficiente para activar servomotores.");
-            }
-        }
-
-        function actualizarLecturas() {
-            // Aquí simulamos lecturas actualizadas desde sensores
-            altitudActual -= 50; // Simulando descenso
-            document.getElementById("altitud").innerText = altitudActual;
-            document.getElementById("velocidad-descenso").innerText = Math.random().toFixed(2); // Velocidad aleatoria
-            document.getElementById("presion-atmosferica").innerText = (101.325 - (altitudActual * 0.12)).toFixed(2);
-            document.getElementById("temperatura").innerText = (15 - (altitudActual * 0.005)).toFixed(2);
-            document.getElementById("orientacion").innerText = Math.random().toFixed(2);
-
-            // Actualizar distancia al suelo para alerta de aterrizaje
-            document.getElementById("distancia-suelo").innerText = altitudActual;
-
-            // Alerta si la distancia es menor a 3 metros
-            if (altitudActual <= 3) {
-                document.getElementById("estado-descenso").innerText = "Cerca del aterrizaje";
-            } else {
-                document.getElementById("estado-descenso").innerText = "Descenso normal";
-            }
-        }
-
-        function calcularDistanciaSuelo() {
-            return altitudActual; // Supongamos que la altitud es la distancia al suelo
-        }
-
-        // Simulaciones adicionales para los gráficos
-        document.addEventListener('DOMContentLoaded', function() {
-            // Inicialización de gráficos
-            const ctxAltitud = document.getElementById('grafico-altitud').getContext('2d');
-            const ctxVelocidad = document.getElementById('grafico-velocidad').getContext('2d');
-
-            const graficoAltitud = new Chart(ctxAltitud, {
-                type: 'line',
-                data: {
-                    labels: [], // Tiempo
-                    datasets: [{
-                        label: 'Altitud (m)',
-                        data: [],
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        fill: false
-                    }]
-                }
-            });
-
-            const graficoVelocidad = new Chart(ctxVelocidad, {
-                type: 'line',
-                data: {
-                    labels: [],
-                    datasets: [{
-                        label: 'Velocidad de Descenso (m/s)',
-                        data: [],
-                        borderColor: 'rgba(255, 99, 132, 1)',
-                        fill: false
-                    }]
-                }
-            });
-
-            setInterval(() => {
-                graficoAltitud.data.labels.push(new Date().toLocaleTimeString());
-                graficoAltitud.data.datasets[0].data.push(altitudActual);
-                graficoAltitud.update();
-
-                graficoVelocidad.data.labels.push(new Date().toLocaleTimeString());
-                graficoVelocidad.data.datasets[0].data.push(Math.random());
-                graficoVelocidad.update();
-            }, 2000);
-        });
+        setTimeout(() => {
+            actualizarEstadoMotor(3, 'activado');
+            actualizarEstadoMotor(4, 'activado');
+        }, 5000);
     </script>
 </body>
 </html>
+
