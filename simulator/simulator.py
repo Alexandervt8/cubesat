@@ -4,7 +4,8 @@ import math
 import random  # Asegúrate de que esta línea esté incluida
 
 # URL del servlet
-url = 'http://192.168.0.7:8080/control/lora'
+url_netbeans = 'http://192.168.0.7:8080/control/lora'  # NetBeans (Servidor A)
+url_nodejs = 'http://localhost:3001/control/lora'  # Node.js (Servidor B)
 
 # Parámetros para el ruido y el movimiento
 noise_factor_accel = 0.1  # Ruido para aceleración
@@ -46,23 +47,31 @@ def simulate_mpu6050_data(current_time):
     data = f"{ax:.2f},{ay:.2f},{az:.2f},{gx:.2f},{gy:.2f},{gz:.2f}"
     return data
 
-# Bucle para enviar datos simulados en intervalos regulares
+# Función para enviar datos a un servidor con reintentos
+def enviar_datos_servidor(url, data, nombre_servidor, intentos=3):
+    for intento in range(intentos):
+        try:
+            response = requests.post(url, data={'data': data}, timeout=5)
+            if response.status_code == 200:
+                print(f"✅ [{nombre_servidor}] Datos enviados correctamente.")
+                return True
+            else:
+                print(f"⚠️ [{nombre_servidor}] Error {response.status_code}: {response.text}")
+        except requests.exceptions.RequestException as e:
+            print(f"❌ [{nombre_servidor}] Error de conexión: {e}. Reintentando...")
+            time.sleep(2)  # Esperar antes de reintentar
+    return False
+
+# Bucle para enviar datos simulados a ambos servidores
 while True:
     current_time = time.time()
     simulated_data = simulate_mpu6050_data(current_time)
 
-    # Enviar solicitud POST con los datos simulados
-    try:
-        response = requests.post(url, data={'data': simulated_data}, timeout=5)
+    # Enviar a NetBeans
+    enviar_datos_servidor(url_netbeans, simulated_data, "NetBeans")
 
-        # Mostrar el resultado
-        if response.status_code == 200:
-            print(f"Datos enviados: {simulated_data}")
-            print(f"Respuesta del servidor: {response.text}")
-        else:
-            print(f"Error al enviar los datos: {response.status_code}")
-    except requests.exceptions.RequestException as e:
-        print(f"Error de conexión: {e}")
+    # Enviar a Node.js
+    enviar_datos_servidor(url_nodejs, simulated_data, "Node.js")
 
     # Esperar 1 segundo antes de enviar nuevamente
     time.sleep(1)

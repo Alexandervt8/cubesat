@@ -3,8 +3,10 @@ import random
 import time
 import math
 
-# URL del servlet BMP280ReceiverServlet (ajusta la URL según la configuración de tu servidor)
-url = 'http://192.168.0.7:8080/control/bmp280'
+# URLs de destino
+url_netbeans = 'http://192.168.0.7:8080/control/bmp280'  # URL del servlet en NetBeans
+url_nodejs = 'http://localhost:3001/control/bmp280'  # URL del servidor Node.js
+#url = 'http://192.168.3.64:8080/control/bmp280'
 
 # Constantes de la simulación
 g = 9.81  # Aceleración debido a la gravedad (m/s²)
@@ -59,15 +61,25 @@ def enviar_datos():
         
         headers = {"Content-Type": "application/x-www-form-urlencoded"}
 
+        # Enviar datos al servlet en NetBeans
         try:
-            response = requests.post(url, data=data, headers=headers)
-            if response.status_code == 200:
-                print(f"Datos enviados exitosamente: {data}")
-                print(f"Respuesta del servidor: {response.json()}")
+            response_netbeans = requests.post(url_netbeans, data=data, headers=headers)
+            if response_netbeans.status_code == 200:
+                print(f"✅ Datos enviados a NetBeans: {data}")
             else:
-                print(f"Error al enviar datos: {response.status_code} - {response.text}")
+                print(f"⚠️ Error NetBeans: {response_netbeans.status_code} - {response_netbeans.text}")
         except Exception as e:
-            print(f"Error en la conexión: {e}")
+            print(f"❌ Error al conectar con NetBeans: {e}")
+
+        # Enviar datos al servidor Node.js
+        try:
+            response_nodejs = requests.post(url_nodejs, data=data, headers=headers)
+            if response_nodejs.status_code == 200:
+                print(f"✅ Datos enviados a Node.js: {data}")
+            else:
+                print(f"⚠️ Error Node.js: {response_nodejs.status_code} - {response_nodejs.text}")
+        except Exception as e:
+            print(f"❌ Error al conectar con Node.js: {e}")
 
         tiempo += 1
         time.sleep(1)
